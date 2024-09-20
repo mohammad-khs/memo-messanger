@@ -1,9 +1,10 @@
 import { fetchRedis } from "@/helpers/redis";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { pusherServer } from "@/lib/pusher";
+import { toPusherKey } from "@/lib/utils";
 import { addFriendValidator } from "@/lib/validations/add-friend";
 import { getServerSession } from "next-auth";
-import { headers } from "next/headers";
 import { z } from "zod";
 
 export async function POST(req: Request) {
@@ -33,10 +34,6 @@ export async function POST(req: Request) {
       });
     }
 
-    // i should look more into this section in order to undrestand whats happening
-    // first : whats user:${idToAdd}:incoming_friend_requests
-    // second : "those commands in helpers, find out what are they and they are used"
-
     // check if user is already added
     const isAlreadyAdded = (await fetchRedis(
       "sismember",
@@ -59,14 +56,23 @@ export async function POST(req: Request) {
       return new Response("Already friends with this user", { status: 400 });
     }
 
-    // valid requests . send friend request
+    // valid request, send friend request
+
+    await pusherServer.trigger(
+      toPusherKey(`user:${idToAdd}:incoming_friend_requests`),
+      "incoming_friend_requests",
+      {
+        senderId: session.user.id,
+        senderEmail: session.user.email,
+      }
+    );
 
     await db.sadd(`user:${idToAdd}:incoming_friend_requests`, session.user.id);
 
     return new Response("OK");
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return new Response("Invalid request palyload", { status: 422 });
+      return new Response("Invalid request payload", { status: 422 });
     }
 
     return new Response("Invalid request", { status: 400 });
