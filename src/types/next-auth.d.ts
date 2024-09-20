@@ -15,3 +15,8 @@ declare module "next-auth" {
     };
   }
 }
+
+// this one should be temperary
+if ((Session, JWT)) {
+  return;
+}
