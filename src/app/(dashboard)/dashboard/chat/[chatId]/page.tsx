@@ -35,6 +35,7 @@ async function getChatMessages(chatId: string) {
 }
 
 const Page = async ({ params }: PageProps) => {
+  await new Promise((reslove) => setTimeout(reslove, 10000));
   const { chatId } = params;
   const session = await getServerSession(authOptions);
 
@@ -49,7 +50,12 @@ const Page = async ({ params }: PageProps) => {
   }
 
   const chatPartnerId = user.id === userId1 ? userId2 : userId1;
-  const chatPartner = (await db.get(`user:${chatPartnerId}`)) as User;
+
+  const chatPartnerRaw = (await fetchRedis(
+    "get",
+    `user:${chatPartnerId}`
+  )) as string;
+  const chatPartner = JSON.parse(chatPartnerRaw) as User;
   const initialMessages = await getChatMessages(chatId);
 
   return (
