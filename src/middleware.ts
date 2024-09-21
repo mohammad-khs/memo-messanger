@@ -56,10 +56,10 @@ export async function middleware(req: NextRequest) {
       // Here, implement your logic to exchange the code for tokens
       // If successful, you can set a cookie or session here
 
-      return NextResponse.redirect("http://localhost:3000/dashboard"); // Redirect to dashboard on success
+      return NextResponse.redirect("https://memo-messanger.vercel.app/dashboard"); // Redirect to dashboard on success
     } catch (error) {
       console.error(error);
-      return NextResponse.redirect("http://localhost:3000");
+      return NextResponse.redirect("https://memo-messanger.vercel.app");
     }
   }
 
