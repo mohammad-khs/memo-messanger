@@ -1,41 +1,77 @@
-import { getToken } from "next-auth/jwt";
-import { withAuth } from "next-auth/middleware";
-import { NextResponse } from "next/server";
-export default withAuth(
-  async function middleware(req) {
-    const pathName = req.nextUrl.pathname;
+// import { getToken } from "next-auth/jwt";
+// import { withAuth } from "next-auth/middleware";
+import { NextRequest, NextResponse } from "next/server";
 
-    // Manange route protection
-    const isAuth = await getToken({ req });
-    const isLogingPage = pathName.startsWith("/login");
+// export default withAuth(
+//   async function middleware(req , res) {
+//     const pathName = req.nextUrl.pathname;
 
-    const sensitiveRoutes = ["/dashboard"];
-    const isAccessingSensitiveRoute = sensitiveRoutes.some((route) =>
-      pathName.startsWith(route)
-    );
-    if (isLogingPage) {
-      if (isAuth) {
-        return NextResponse.redirect(new URL("/dashboard", req.url));
-      }
+//     // Manange route protection
+//     const isAuth = await getToken({ req });
+//     const isLogingPage = pathName.startsWith("/login");
 
-      return NextResponse.next();
+//     const sensitiveRoutes = ["/dashboard"];
+//     const isAccessingSensitiveRoute = sensitiveRoutes.some((route) =>
+//       pathName.startsWith(route)
+//     );
+//     if (isLogingPage) {
+//       if (isAuth) {
+//         return NextResponse.redirect(new URL("/dashboard", req.url));
+//       }
+
+//       return NextResponse.next();
+//     }
+//     if (!isAuth && isAccessingSensitiveRoute) {
+//       return NextResponse.redirect(new URL("/login", req.url));
+//     }
+//     if (pathName === "/") {
+//       return NextResponse.redirect(new URL("/login", req.url));
+//     }
+//   },
+//   {
+//     callbacks: {
+//       async authorized() {
+//         return true;
+//       },
+//     },
+//   }
+// );
+
+export async function middleware(req: NextRequest) {
+  const { pathname } = req.nextUrl;
+
+  // Check if the request is for the GitHub callback
+  if (pathname === "/api/auth/callback/github") {
+    const { searchParams } = req.nextUrl;
+
+    const code = searchParams.get("code");
+    const state = searchParams.get("state");
+
+    // Validate the presence of the code
+    if (!code) {
+      return NextResponse.redirect("/error?message=Missing code");
     }
-    if (!isAuth && isAccessingSensitiveRoute) {
-      return NextResponse.redirect(new URL("/login", req.url));
+
+    try {
+      // Here, implement your logic to exchange the code for tokens
+      // If successful, you can set a cookie or session here
+
+      return NextResponse.redirect("http://localhost:3000/dashboard"); // Redirect to dashboard on success
+    } catch (error) {
+      console.error(error);
+      return NextResponse.redirect("http://localhost:3000");
     }
-    if (pathName === "/") {
-      return NextResponse.redirect(new URL("/login", req.url));
-    }
-  },
-  {
-    callbacks: {
-      async authorized() {
-        return true;
-      },
-    },
   }
-);
 
+  // Pass-through for other routes
+  return NextResponse.next();
+}
+
+// Optional: Specify the paths for which the middleware should run
 export const config = {
-  matcher: ["/", "/login", "/dashboard/:path*"],
+  matcher: ["/api/auth/callback/github", "/", "/login", "/dashboard/:path*"], // Add other paths as needed
 };
+
+// export const config = {
+//   matcher: ["/", "/login", "/dashboard/:path*"],
+// };

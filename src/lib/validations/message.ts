@@ -7,6 +7,5 @@ export const messageValidator = z.object({
   timeStamp: z.number(),
 });
 
-export const messageArrayValidator = z.array(messageValidator)
-
-export type Message = z.infer<typeof messageValidator>
+export const messageArrayValidator = z.array(messageValidator);
+export type Message = z.infer<typeof messageValidator>;
