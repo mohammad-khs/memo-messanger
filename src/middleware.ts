@@ -68,7 +68,6 @@ export default withAuth(
       }
     }
 
-<<<<<<< HEAD
     // Pass-through for other routes
     return NextResponse.next();
   },
@@ -78,17 +77,6 @@ export default withAuth(
         return true;
       },
     },
-=======
-    try {
-      // Here, implement your logic to exchange the code for tokens
-      // If successful, you can set a cookie or session here
-
-      return NextResponse.redirect("https://memo-messanger.vercel.app/dashboard"); // Redirect to dashboard on success
-    } catch (error) {
-      console.error(error);
-      return NextResponse.redirect("https://memo-messanger.vercel.app");
-    }
->>>>>>> e17b910de001da5d64a6ee63d2ce31043ddf687e
   }
 );
 // Optional: Specify the paths for which the middleware should run
