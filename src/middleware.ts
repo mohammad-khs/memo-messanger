@@ -45,7 +45,7 @@ export async function middleware(req: NextRequest) {
     const { searchParams } = req.nextUrl;
 
     const code = searchParams.get("code");
-    const state = searchParams.get("state");
+    // const state = searchParams.get("state");
 
     // Validate the presence of the code
     if (!code) {
