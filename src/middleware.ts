@@ -1,6 +1,6 @@
 import { getToken } from "next-auth/jwt";
 import { withAuth } from "next-auth/middleware";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 ///////////////////////////////////////////////////
 // SO HERE IS WHAT IM GONNA DO :
