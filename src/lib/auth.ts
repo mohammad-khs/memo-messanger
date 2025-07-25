@@ -40,6 +40,9 @@ export const authOptions: NextAuthOptions = {
         process.env.GOOGLE_CLIENT_ID ?? "",
         process.env.GOOGLE_CLIENT_SECRET ?? ""
       ).clientSecret,
+      httpOptions: {
+        timeout: 5000,
+      },
     }),
     GithubProvider({
       clientId: getCredentials(
@@ -50,6 +53,9 @@ export const authOptions: NextAuthOptions = {
         process.env.GITHUB_CLIENT_ID ?? "",
         process.env.GITHUB_CLIENT_SECRET ?? ""
       ).clientSecret,
+      httpOptions: {
+        timeout: 5000,
+      },
     }),
   ],
 
